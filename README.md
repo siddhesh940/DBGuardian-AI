@@ -2,6 +2,8 @@
 
 > AI-Powered Oracle Database Performance Analysis Platform — Production-Ready SaaS
 
+🔗 **Live Demo:** [https://db-guardian-ai.vercel.app/](https://db-guardian-ai.vercel.app/)
+
 A modern, enterprise-grade SaaS platform that performs AI-driven Root Cause Analysis (RCA) on Oracle Database workloads. Upload AWR/ASH reports and get instant, expert-level DBA insights with actionable recommendations.
 
 ---
@@ -22,7 +24,7 @@ A modern, enterprise-grade SaaS platform that performs AI-driven Root Cause Anal
 
 ```bash
 # Clone & install
-git clone <your-repo-url>
+git clone https://github.com/siddhesh940/DBGuardian-AI.git
 cd Final_Workload_Project
 pip install -r requirements.txt
 
