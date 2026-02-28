@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register — Oracle DBA Intelligence</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/static/style.css?v=5.0" />
+  </head>
+  <body>
+    <div class="auth-page">
+      <div class="auth-container">
+        <div class="auth-card animate-in">
+          <div class="auth-logo">
+            <div class="logo-icon">⚡</div>
+            <h1>Create Account</h1>
+            <p>Get started with Oracle DBA Intelligence</p>
+          </div>
+
+          <div id="authMessage" class="auth-message"></div>
+
+          <form id="registerForm" onsubmit="handleRegister(event)">
+            <div class="form-group">
+              <label for="username">Username</label>
+              <input
+                type="text"
+                id="username"
+                class="form-input"
+                placeholder="Choose a username"
+                required
+                autocomplete="username"
+              />
+            </div>
+            <div class="form-group">
+              <label for="password">Password</label>
+              <input
+                type="password"
+                id="password"
+                class="form-input"
+                placeholder="Create a password"
+                required
+                autocomplete="new-password"
+              />
+            </div>
+            <div class="form-group">
+              <label for="confirmPassword">Confirm Password</label>
+              <input
+                type="password"
+                id="confirmPassword"
+                class="form-input"
+                placeholder="Confirm your password"
+                required
+                autocomplete="new-password"
+              />
+            </div>
+            <button type="submit" id="registerBtn" class="btn-primary">
+              Create Account
+            </button>
+          </form>
+
+          <div class="auth-footer">
+            Already have an account? <a href="/login">Sign in</a> <br /><a
+              href="/"
+              style="
+                font-size: 0.8rem;
+                margin-top: 8px;
+                display: inline-block;
+                opacity: 0.7;
+              "
+              >← Back to Home</a
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      async function handleRegister(e) {
+        e.preventDefault();
+        const btn = document.getElementById("registerBtn");
+        const msg = document.getElementById("authMessage");
+        const pw = document.getElementById("password").value;
+        const cpw = document.getElementById("confirmPassword").value;
+
+        if (pw !== cpw) {
+          msg.textContent = "Passwords do not match";
+          msg.className = "auth-message error";
+          return;
+        }
+
+        btn.classList.add("loading");
+        btn.disabled = true;
+        msg.className = "auth-message";
+        msg.style.display = "none";
+
+        try {
+          const res = await fetch("/auth/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({
+              username: document.getElementById("username").value.trim(),
+              password: pw,
+            }),
+          });
+          const data = await res.json();
+          if (res.ok) {
+            msg.textContent = "Account created! Redirecting to login...";
+            msg.className = "auth-message success";
+            setTimeout(() => (window.location.href = "/login"), 1000);
+          } else {
+            msg.textContent = data.detail || "Registration failed";
+            msg.className = "auth-message error";
+            btn.classList.remove("loading");
+            btn.disabled = false;
+          }
+        } catch {
+          msg.textContent = "Network error. Please try again.";
+          msg.className = "auth-message error";
+          btn.classList.remove("loading");
+          btn.disabled = false;
+        }
+      }
+    </script>
+  </body>
+</html>

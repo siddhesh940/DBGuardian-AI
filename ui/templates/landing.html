@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      Oracle DBA Intelligence — AI-Powered Database Performance Analysis
+    </title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/static/style.css?v=7.2" />
+  </head>
+  <body class="landing-body">
+    <!-- ===== NAVBAR ===== -->
+    <nav class="landing-nav">
+      <div class="landing-nav-inner">
+        <a href="/" class="landing-brand">
+          <div class="brand-icon">⚡</div>
+          <span>Oracle <strong>DBA Intelligence</strong></span>
+        </a>
+        <div class="landing-nav-links">
+          <a href="#features">Features</a>
+          <a href="#how-it-works">How It Works</a>
+          <a href="#tech">Technology</a>
+          <a href="/login" class="nav-btn-outline">Sign In</a>
+          <a href="/register" class="nav-btn-solid">Get Started Free</a>
+        </div>
+        <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+      </div>
+      <div class="mobile-menu" id="mobileMenu">
+        <a href="#features">Features</a>
+        <a href="#how-it-works">How It Works</a>
+        <a href="#tech">Technology</a>
+        <a href="/login">Sign In</a>
+        <a href="/register" class="nav-btn-solid">Get Started Free</a>
+      </div>
+    </nav>
+
+    <!-- ===== HERO ===== -->
+    <section class="hero">
+      <div class="hero-bg-glow"></div>
+      <div class="hero-content">
+        <div class="hero-text">
+          <div class="hero-badge">🚀 AI-Powered Oracle DBA Analysis Platform</div>
+          <h1>
+            Turn Database Chaos<br />Into
+            <span class="gradient-text">Actionable Intelligence</span>
+          </h1>
+          <p class="hero-subtitle">
+            Upload your Oracle AWR & ASH reports. Get instant AI-driven root cause
+            analysis, problematic SQL identification, and expert-level fix
+            recommendations — in seconds.
+          </p>
+          <div class="hero-actions">
+            <a href="/register" class="btn-hero-primary">
+              Start Analyzing Free
+              <span class="btn-arrow">→</span>
+            </a>
+            <a href="#how-it-works" class="btn-hero-secondary">
+              See How It Works
+            </a>
+          </div>
+          <div class="hero-stats">
+            <div class="hero-stat">
+              <span class="hero-stat-value">3-Step</span>
+              <span class="hero-stat-label">Analysis Pipeline</span>
+            </div>
+            <div class="hero-stat-divider"></div>
+            <div class="hero-stat">
+              <span class="hero-stat-value">&lt;30s</span>
+              <span class="hero-stat-label">Root Cause Detection</span>
+            </div>
+            <div class="hero-stat-divider"></div>
+            <div class="hero-stat">
+              <span class="hero-stat-value">100%</span>
+              <span class="hero-stat-label">Automated Fixes</span>
+            </div>
+          </div>
+        </div>
+        <div class="hero-visual">
+          <div class="hero-card-stack">
+          <div class="hero-mock-card card-1">
+            <div class="mock-header">
+              <span class="mock-dot red"></span>
+              <span class="mock-dot yellow"></span>
+              <span class="mock-dot green"></span>
+              <span class="mock-title">AWR Analysis</span>
+            </div>
+            <div class="mock-body">
+              <div class="mock-row">
+                <span class="mock-label">SQL ID</span
+                ><span class="mock-val accent">g3q9ka7n8c1pl</span>
+              </div>
+              <div class="mock-row">
+                <span class="mock-label">Elapsed</span
+                ><span class="mock-val danger">847.2s</span>
+              </div>
+              <div class="mock-row">
+                <span class="mock-label">CPU%</span
+                ><span class="mock-val warning">92.4%</span>
+              </div>
+              <div class="mock-row">
+                <span class="mock-label">Risk</span
+                ><span class="mock-badge danger">CRITICAL</span>
+              </div>
+            </div>
+          </div>
+          <div class="hero-mock-card card-2">
+            <div class="mock-header">
+              <span class="mock-dot red"></span>
+              <span class="mock-dot yellow"></span>
+              <span class="mock-dot green"></span>
+              <span class="mock-title">Root Cause</span>
+            </div>
+            <div class="mock-body">
+              <div class="mock-cause">🔥 CPU-Bound SQL</div>
+              <div class="mock-fix">
+                CREATE INDEX idx_orders_cust ON orders(customer_id, status);
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      </div>
+    </section>
+
+    <!-- ===== FEATURES ===== -->
+    <section class="features-section" id="features">
+      <div class="section-container">
+        <div class="section-label">Features</div>
+        <h2 class="section-title">
+          Everything a DBA Needs.<br /><span class="gradient-text"
+            >Powered by AI.</span
+          >
+        </h2>
+        <p class="section-desc">
+          From raw AWR/ASH HTML reports to production-ready fix commands — fully
+          automated.
+        </p>
+
+        <div class="features-grid">
+          <div class="feature-card">
+            <div
+              class="feature-icon"
+              style="background: var(--info-bg); color: var(--info)"
+            >
+              📤
+            </div>
+            <h3>Multi-Report Upload</h3>
+            <p>
+              Drag & drop multiple AWR and ASH HTML reports simultaneously.
+              Automatic file type detection and parsing.
+            </p>
+          </div>
+          <div class="feature-card">
+            <div
+              class="feature-icon"
+              style="background: var(--danger-bg); color: var(--danger)"
+            >
+              🔍
+            </div>
+            <h3>High-Load Detection</h3>
+            <p>
+              Automatically identifies time windows with abnormal database load,
+              CPU spikes, and IO bottlenecks.
+            </p>
+          </div>
+          <div class="feature-card">
+            <div
+              class="feature-icon"
+              style="background: var(--warning-bg); color: var(--warning)"
+            >
+              🧠
+            </div>
+            <h3>AI Root Cause Analysis</h3>
+            <p>
+              Deep-dive into the top 1–3 most problematic SQL statements with
+              execution pattern analysis and resource profiling.
+            </p>
+          </div>
+          <div class="feature-card">
+            <div
+              class="feature-icon"
+              style="background: var(--success-bg); color: var(--success)"
+            >
+              🛠️
+            </div>
+            <h3>Expert Fix Recommendations</h3>
+            <p>
+              Get production-ready DBA commands: index creation, SQL rewrites,
+              parameter changes, and partitioning strategies.
+            </p>
+          </div>
+          <div class="feature-card">
+            <div
+              class="feature-icon"
+              style="background: rgba(139, 92, 246, 0.12); color: #8b5cf6"
+            >
+              📊
+            </div>
+            <h3>Unified Metrics Dashboard</h3>
+            <p>
+              Single source of truth for elapsed time, CPU%, IO%, DB Time —
+              consistent across all analysis views.
+            </p>
+          </div>
+          <div class="feature-card">
+            <div
+              class="feature-icon"
+              style="background: rgba(236, 72, 153, 0.12); color: #ec4899"
+            >
+              📋
+            </div>
+            <h3>Copy & Export</h3>
+            <p>
+              One-click copy for SQL IDs, DBA commands, index scripts, and full
+              analysis reports.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== HOW IT WORKS ===== -->
+    <section class="how-section" id="how-it-works">
+      <div class="section-container">
+        <div class="section-label">How It Works</div>
+        <h2 class="section-title">
+          Three Steps to<br /><span class="gradient-text"
+            >Database Clarity</span
+          >
+        </h2>
+
+        <div class="steps-grid">
+          <div class="step-card">
+            <div class="step-number">01</div>
+            <div class="step-icon">📤</div>
+            <h3>Upload Reports</h3>
+            <p>
+              Upload your Oracle AWR or ASH HTML report files. Our parser
+              automatically extracts SQL statistics, wait events, and instance
+              metrics into structured CSVs.
+            </p>
+          </div>
+          <div class="step-connector">
+            <div class="connector-line"></div>
+            <div class="connector-arrow">→</div>
+          </div>
+          <div class="step-card">
+            <div class="step-number">02</div>
+            <div class="step-icon">🧠</div>
+            <h3>AI Analysis</h3>
+            <p>
+              Our DBA Expert Engine runs root cause analysis: identifies
+              high-load windows, pinpoints CPU/IO-bound SQL, and classifies
+              execution patterns — all automated.
+            </p>
+          </div>
+          <div class="step-connector">
+            <div class="connector-line"></div>
+            <div class="connector-arrow">→</div>
+          </div>
+          <div class="step-card">
+            <div class="step-number">03</div>
+            <div class="step-icon">🛠️</div>
+            <h3>Get Fixes</h3>
+            <p>
+              Receive prioritized, production-ready recommendations: exact
+              CREATE INDEX commands, SQL rewrites, Oracle parameter tuning —
+              ready to execute.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== TECH STACK ===== -->
+    <section class="tech-section" id="tech">
+      <div class="section-container">
+        <div class="section-label">Technology</div>
+        <h2 class="section-title">
+          Built With<br /><span class="gradient-text">Modern Technology</span>
+        </h2>
+
+        <div class="tech-grid">
+          <div class="tech-card">
+            <div class="tech-name">FastAPI</div>
+            <div class="tech-desc">High-performance asynchronous backend</div>
+          </div>
+          <div class="tech-card">
+            <div class="tech-name">Python</div>
+            <div class="tech-desc">Custom DBA Expert Engine & parsers</div>
+          </div>
+          <div class="tech-card">
+            <div class="tech-name">Pandas</div>
+            <div class="tech-desc">Data analysis & metric computation</div>
+          </div>
+          <div class="tech-card">
+            <div class="tech-name">BeautifulSoup</div>
+            <div class="tech-desc">AWR/ASH HTML report parsing</div>
+          </div>
+          <div class="tech-card">
+            <div class="tech-name">Vanilla JS</div>
+            <div class="tech-desc">Zero-dependency reactive UI</div>
+          </div>
+          <div class="tech-card">
+            <div class="tech-name">Vercel</div>
+            <div class="tech-desc">Edge deployment & global CDN</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== CTA ===== -->
+    <section class="cta-section">
+      <div class="section-container">
+        <div class="cta-card">
+          <h2>Ready to Optimize Your Database?</h2>
+          <p>
+            Start analyzing your Oracle AWR & ASH reports today. No credit card
+            required.
+          </p>
+          <a href="/register" class="btn-hero-primary">
+            Get Started Free
+            <span class="btn-arrow">→</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="landing-footer">
+      <div class="section-container">
+        <div class="footer-inner">
+          <div class="footer-brand">
+            <div class="brand-icon">⚡</div>
+            <span>Oracle DBA Intelligence</span>
+          </div>
+          <div class="footer-text">
+            AI-Powered Database Performance Analysis Platform
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      function toggleMobileMenu() {
+        document.getElementById("mobileMenu").classList.toggle("open");
+      }
+
+      // Smooth scroll for anchor links
+      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+        anchor.addEventListener("click", function (e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute("href"));
+          if (target) {
+            target.scrollIntoView({ behavior: "smooth", block: "start" });
+            // Close mobile menu if open
+            document.getElementById("mobileMenu").classList.remove("open");
+          }
+        });
+      });
+
+      // Navbar background on scroll
+      window.addEventListener("scroll", () => {
+        const nav = document.querySelector(".landing-nav");
+        if (window.scrollY > 50) {
+          nav.classList.add("scrolled");
+        } else {
+          nav.classList.remove("scrolled");
+        }
+      });
+
+      // Intersection Observer for animations
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("visible");
+            }
+          });
+        },
+        { threshold: 0.1, rootMargin: "0px 0px -50px 0px" },
+      );
+
+      document
+        .querySelectorAll(".feature-card, .step-card, .tech-card")
+        .forEach((el) => {
+          observer.observe(el);
+        });
+    </script>
+  </body>
+</html>

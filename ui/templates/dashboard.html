@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SQL Workload RCA Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css?v=3.0" />
+  </head>
+  <body class="dashboard-body">
+    <header class="dashboard-header">
+      <div class="header-content">
+        <h1>SQL Workload RCA Dashboard</h1>
+        <p>AWR / ASH Analysis with Intelligent Recommendations</p>
+        <button onclick="logout()" class="logout-btn">Logout</button>
+      </div>
+    </header>
+
+    <main class="dashboard-main">
+      <!-- Upload Section -->
+      <section class="upload-section" id="uploadSection">
+        <h2>Upload AWR/ASH Reports</h2>
+        <p>Upload daily AWR and ASH HTML files provided by your DBA</p>
+
+        <div class="upload-container">
+          <div class="upload-area" id="uploadArea">
+            <div class="upload-icon">📄</div>
+            <p>
+              Drag & drop files here or <span class="browse-link">browse</span>
+            </p>
+            <p class="upload-hint">Supports: AWR.html, ASH.html files</p>
+            <input
+              type="file"
+              id="fileInput"
+              multiple
+              accept=".html"
+              style="display: none"
+            />
+          </div>
+
+          <div class="file-list" id="fileList" style="display: none">
+            <h3>Selected Files:</h3>
+            <ul id="selectedFiles"></ul>
+          </div>
+
+          <button
+            id="uploadBtn"
+            class="upload-btn"
+            style="display: none"
+            onclick="uploadFiles()"
+          >
+            Upload & Parse Files
+          </button>
+        </div>
+
+        <div
+          class="upload-status"
+          id="uploadStatus"
+          style="display: none"
+        ></div>
+      </section>
+
+      <!-- Parsing Section -->
+      <section
+        class="parsing-section"
+        id="parsingSection"
+        style="display: none"
+      >
+        <h2>📊 Parsing Results</h2>
+        <div class="parsing-status" id="parsingStatus"></div>
+
+        <div
+          class="high-load-section"
+          id="highLoadSection"
+          style="display: none"
+        >
+          <h3>🔍 High Load Time Detection</h3>
+          <div class="high-load-results" id="highLoadResults"></div>
+        </div>
+      </section>
+
+      <!-- RCA Analysis Section -->
+      <section
+        class="time-window-section"
+        id="timeWindowSection"
+        style="display: none"
+      >
+        <h2>🔍 Run RCA Analysis</h2>
+        <div class="auto-time-window-notice">
+          <span class="notice-text"
+            >Analysis window automatically detected from AWR report:
+            <strong id="detectedTimeWindowDisplay">--</strong></span
+          >
+        </div>
+
+        <div class="timestamp-controls">
+          <button id="runRcaBtn" class="rca-btn" onclick="runRCA()" disabled>
+            🔍 Run RCA Analysis
+          </button>
+        </div>
+      </section>
+
+      <!-- Summary Table -->
+      <section class="results" id="summarySection" style="display: none">
+        <h2>Problematic Queries</h2>
+        <table id="summaryTable">
+          <thead>
+            <tr>
+              <th>SQL ID</th>
+              <th>Elapsed Time (s)</th>
+              <th>CPU Time (s)</th>
+              <th>Executions</th>
+              <th>Avg Elapsed Time</th>
+              <th>Risk</th>
+            </tr>
+          </thead>
+          <tbody id="summary-table-body"></tbody>
+        </table>
+      </section>
+
+      <!-- Detailed -->
+      <section
+        class="results-section"
+        id="resultsSection"
+        style="display: none"
+      >
+        <h2>Problematic Queries</h2>
+
+        <table class="results-table" id="detailedTable">
+          <thead>
+            <tr>
+              <th>SQL ID</th>
+              <th>Elapsed</th>
+              <th>CPU</th>
+              <th>Execs</th>
+              <th>Avg</th>
+              <th>Risk</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="detailed-table-body"></tbody>
+        </table>
+      </section>
+
+      <!-- Fix Panel -->
+      <section class="fix-panel" id="fixPanel" style="display: none">
+        <h2>Fix Recommendations</h2>
+        <div class="fix-content">
+          <div class="fix-section">
+            <h3>🟢 Index</h3>
+            <pre id="recIndex">N/A</pre>
+          </div>
+
+          <div class="fix-section">
+            <h3>🟠 Rewrite</h3>
+            <pre id="recRewrite">N/A</pre>
+          </div>
+
+          <div class="fix-section">
+            <h3>🔴 Risk</h3>
+            <span id="riskScore" class="risk-score">N/A</span>
+          </div>
+
+          <div class="fix-section">
+            <h3>🔵 DBA Command</h3>
+            <pre id="commands">N/A</pre>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="/static/app.js"></script>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        initializeFileUpload();
+        loadExistingResults();
+        initializeTimePickers(null);
+      });
+
+      // --------------------------
+      // IMPORTANT SECURITY FIX 🔥
+      // --------------------------
+      async function loadExistingResults() {
+        try {
+          const response = await fetch("/api/results", {
+            method: "GET",
+            credentials: "include", // <<< SEND SESSION COOKIE
+            cache: "no-store",
+          });
+
+          if (!response.ok) return;
+
+          const result = await response.json();
+          if (result.has_data) {
+            showExistingDataOptions();
+          }
+        } catch (err) {
+          console.log("No existing data");
+        }
+      }
+
+      // Upload fix
+      async function uploadFiles() {
+        const formData = new FormData();
+        selectedFiles.forEach((f) => formData.append("files", f));
+
+        const response = await fetch("/api/upload", {
+          method: "POST",
+          body: formData,
+          credentials: "include",
+          cache: "no-store",
+        });
+
+        const result = await response.json();
+        displayParsingResults(result);
+      }
+
+      // RCA fix
+      async function runRCA() {
+        const timeRange = getSelectedTimeRange();
+
+        const response = await fetch("/api/run_rca", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          cache: "no-store",
+          body: JSON.stringify(timeRange),
+        });
+
+        const result = await response.json();
+        displayRCAResults(result);
+      }
+
+      // Logout
+      function logout() {
+        fetch("/auth/logout", {
+          method: "POST",
+          credentials: "include",
+        }).then(() => (window.location.href = "/login"));
+      }
+    </script>
+  </body>
+</html>

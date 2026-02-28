@@ -1,0 +1,6 @@
+# pylintrc - disable all type checking
+[MASTER]
+disable=all
+
+[MESSAGES CONTROL]
+disable=all

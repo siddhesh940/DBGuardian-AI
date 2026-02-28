@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Analysis Results — SQL Workload RCA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/style.css?v=9.0" />
+</head>
+<body class="dashboard-body">
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <div class="navbar-brand">
+        <div class="brand-icon">⚡</div>
+        <div>
+          <h1>SQL Workload <span>RCA</span></h1>
+          <p class="brand-sub">Analysis Results</p>
+        </div>
+      </div>
+      <div class="navbar-actions">
+        <button class="btn btn-ghost btn-sm" onclick="window.location.href='/dashboard'">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+          Dashboard
+        </button>
+        <button class="btn-logout" onclick="logout()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16,17 21,12 16,7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Logout
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Stats Overview Bar -->
+  <div class="rca-stats-bar" id="resultsOverviewBar" style="display:none">
+    <div class="rca-stats-inner">
+      <div class="rca-stat-pill"><div class="rstat-icon bg-accent">📊</div><div><small>Analysis Window</small><strong id="analysisWindowDisplay">--</strong></div></div>
+      <div class="rca-stat-pill"><div class="rstat-icon bg-blue">🔍</div><div><small>SQL Analyzed</small><strong id="sqlAnalyzedCount">0</strong></div></div>
+      <div class="rca-stat-pill"><div class="rstat-icon bg-red">⚠️</div><div><small>Problematic Found</small><strong id="problematicCount">0</strong></div></div>
+      <div class="rca-stat-pill"><div class="rstat-icon bg-purple">⏱</div><div><small>Total Elapsed</small><strong id="totalElapsedDisplay">0s</strong></div></div>
+    </div>
+  </div>
+
+  <!-- Tab Navigation -->
+  <div class="rca-tab-bar" id="resultsTabNav" style="display:none">
+    <div class="rca-tab-inner">
+      <button class="rca-tab active" data-view="overview" onclick="switchView('overview')"><span class="tab-dot bg-accent"></span>Overview</button>
+      <button class="rca-tab" data-view="rca" onclick="switchView('rca')"><span class="tab-dot bg-red"></span>Root Cause Analysis</button>
+      <button class="rca-tab" data-view="dba-actions" onclick="switchView('dba-actions')"><span class="tab-dot bg-green"></span>DBA Actions</button>
+      <button class="rca-tab" data-view="fix-recs" onclick="switchView('fix-recs')"><span class="tab-dot bg-purple"></span>Fix Recommendations</button>
+      <button class="rca-tab" data-view="action-plan" onclick="switchView('action-plan')"><span class="tab-dot bg-blue"></span>Action Plan</button>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <main class="rca-main results-main">
+    <!-- OVERVIEW VIEW -->
+    <div class="rca-view active" id="view-overview">
+      <section class="rca-card" id="parsingResultsSection" style="display:none">
+        <div class="rca-card-head"><h2><span class="hicon">📁</span> Parsing Results</h2><span class="rca-badge green">COMPLETED</span></div>
+        <div id="parsingSummary"></div>
+      </section>
+      <section class="rca-card" id="highLoadSection" style="display:none">
+        <div class="rca-card-head"><h2><span class="hicon">🔥</span> High Load Time Detection</h2></div>
+        <div id="highLoadContent"></div>
+      </section>
+      <section class="rca-card" id="workloadSummarySection" style="display:none">
+        <div class="rca-card-head"><h2><span class="hicon">🧠</span> AI-Driven DBA Expert Analysis</h2><span class="rca-badge" id="patternBadge2">--</span></div>
+        <div id="workloadSummaryContent"></div>
+      </section>
+    </div>
+
+    <!-- RCA VIEW -->
+    <div class="rca-view" id="view-rca">
+      <section class="rca-card">
+        <div class="rca-card-head"><h2><span class="hicon">🎯</span> Root Cause Analysis</h2><span class="rca-badge blue" id="rcaFindingCount">0 Findings</span></div>
+        <div id="rcaContent"><div class="rca-empty">Run RCA analysis to see root cause findings.</div></div>
+      </section>
+    </div>
+
+    <!-- DBA ACTIONS VIEW -->
+    <div class="rca-view" id="view-dba-actions">
+      <section class="rca-card">
+        <div class="rca-card-head">
+          <h2><span class="hicon">⚡</span> DBA Actions to Reduce Database Load</h2>
+          <button class="copy-all-btn" onclick="copyAllQueries('view-dba-actions')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            Copy All Queries
+          </button>
+        </div>
+        <div id="dbaActionsContent"><div class="rca-empty">DBA actions will appear after RCA analysis.</div></div>
+      </section>
+    </div>
+
+    <!-- FIX RECOMMENDATIONS VIEW -->
+    <div class="rca-view" id="view-fix-recs">
+      <section class="rca-card">
+        <div class="rca-card-head">
+          <h2><span class="hicon">🔧</span> Fix Recommendations</h2>
+          <button class="copy-all-btn" onclick="copyAllQueries('view-fix-recs')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            Copy All Queries
+          </button>
+        </div>
+        <div id="fixRecsContent"><div class="rca-empty">Fix recommendations will appear after RCA analysis.</div></div>
+      </section>
+    </div>
+
+    <!-- ACTION PLAN VIEW -->
+    <div class="rca-view" id="view-action-plan">
+      <section class="rca-card">
+        <div class="rca-card-head">
+          <h2><span class="hicon">📝</span> Detailed Analysis & Action Plan</h2>
+          <button class="copy-all-btn" onclick="copyAllQueries('view-action-plan')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            Copy All Queries
+          </button>
+        </div>
+        <div id="actionPlanContent"><div class="rca-empty">Detailed analysis will appear after RCA analysis.</div></div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Hidden compatibility elements -->
+  <div id="dbaExpertSection" style="display:none"><div id="dbaExpertContent"></div></div>
+  <div id="patternBadge" style="display:none"></div>
+
+  <script src="/static/results.js?v=9.0"></script>
+  <script src="/static/views-manager.js?v=9.0"></script>
+  <script>
+    function logout() {
+      fetch('/auth/logout', { method: 'POST', credentials: 'include' }).then(() => window.location.href = '/login');
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('DOMContentLoaded: calling initializeResultsPage');
+      initializeResultsPage();
+    });
+  </script>
+</body>
+</html>

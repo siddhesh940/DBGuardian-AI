@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login — Oracle DBA Intelligence</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/static/style.css?v=5.0" />
+  </head>
+  <body>
+    <div class="auth-page">
+      <div class="auth-container">
+        <div class="auth-card animate-in">
+          <div class="auth-logo">
+            <div class="logo-icon">⚡</div>
+            <h1>Oracle DBA Intelligence</h1>
+            <p>AI-Powered Database Performance Analysis</p>
+          </div>
+
+          <div id="authMessage" class="auth-message"></div>
+
+          <form id="loginForm" onsubmit="handleLogin(event)">
+            <div class="form-group">
+              <label for="username">Username</label>
+              <input
+                type="text"
+                id="username"
+                class="form-input"
+                placeholder="Enter your username"
+                required
+                autocomplete="username"
+              />
+            </div>
+            <div class="form-group">
+              <label for="password">Password</label>
+              <input
+                type="password"
+                id="password"
+                class="form-input"
+                placeholder="Enter your password"
+                required
+                autocomplete="current-password"
+              />
+            </div>
+            <button type="submit" id="loginBtn" class="btn-primary">
+              Sign In
+            </button>
+          </form>
+
+          <div class="auth-footer">
+            Don't have an account? <a href="/register">Create one</a> <br /><a
+              href="/"
+              style="
+                font-size: 0.8rem;
+                margin-top: 8px;
+                display: inline-block;
+                opacity: 0.7;
+              "
+              >← Back to Home</a
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      async function handleLogin(e) {
+        e.preventDefault();
+        const btn = document.getElementById("loginBtn");
+        const msg = document.getElementById("authMessage");
+        btn.classList.add("loading");
+        btn.disabled = true;
+        msg.className = "auth-message";
+        msg.style.display = "none";
+
+        try {
+          const res = await fetch("/auth/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({
+              username: document.getElementById("username").value.trim(),
+              password: document.getElementById("password").value,
+            }),
+          });
+          const data = await res.json();
+          if (res.ok) {
+            msg.textContent = "Login successful! Redirecting...";
+            msg.className = "auth-message success";
+            setTimeout(() => (window.location.href = "/dashboard"), 600);
+          } else {
+            msg.textContent = data.detail || "Invalid credentials";
+            msg.className = "auth-message error";
+            btn.classList.remove("loading");
+            btn.disabled = false;
+          }
+        } catch {
+          msg.textContent = "Network error. Please try again.";
+          msg.className = "auth-message error";
+          btn.classList.remove("loading");
+          btn.disabled = false;
+        }
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,999 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard — Oracle DBA Intelligence</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/static/style.css?v=11.0" />
+  </head>
+  <body class="dashboard-body">
+    <!-- ═══════════ PREMIUM NAVBAR ═══════════ -->
+    <nav class="dash-nav">
+      <div class="dash-nav-inner">
+        <div class="dash-nav-left">
+          <div class="dash-logo">
+            <div class="dash-logo-icon">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                stroke-linecap="round"
+              >
+                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+              </svg>
+            </div>
+            <div class="dash-logo-text">
+              <span class="dash-logo-title">Oracle DBA</span>
+              <span class="dash-logo-badge">Intelligence</span>
+            </div>
+          </div>
+          <div class="dash-nav-divider"></div>
+          <div class="dash-nav-breadcrumb">
+            <span class="bc-item bc-active">Dashboard</span>
+          </div>
+        </div>
+        <div class="dash-nav-right">
+          <div class="dash-nav-status">
+            <span class="status-dot online"></span>
+            <span>System Online</span>
+          </div>
+          <div class="dash-nav-divider"></div>
+          <div class="dash-user-wrapper">
+            <div
+              class="dash-user-pill"
+              id="userPill"
+              onclick="toggleUserDropdown()"
+            >
+              <div class="dash-user-avatar" id="userAvatar">U</div>
+              <span class="dash-user-name" id="usernameDisplay">User</span>
+              <svg
+                class="dash-user-chevron"
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <polyline points="6,9 12,15 18,9" />
+              </svg>
+            </div>
+            <div class="dash-user-dropdown" id="userDropdown">
+              <div class="dropdown-header">
+                <div class="dropdown-avatar" id="dropdownAvatar">U</div>
+                <div class="dropdown-info">
+                  <span class="dropdown-name" id="dropdownName">User</span>
+                  <span class="dropdown-role">Database Administrator</span>
+                </div>
+              </div>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="/dashboard">
+                <svg
+                  width="15"
+                  height="15"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <rect x="3" y="3" width="7" height="7" />
+                  <rect x="14" y="3" width="7" height="7" />
+                  <rect x="14" y="14" width="7" height="7" />
+                  <rect x="3" y="14" width="7" height="7" />
+                </svg>
+                Dashboard
+              </a>
+              <a class="dropdown-item" href="/newresults">
+                <svg
+                  width="15"
+                  height="15"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"
+                  />
+                  <polyline points="14,2 14,8 20,8" />
+                </svg>
+                View Results
+              </a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item dropdown-item-danger" onclick="logout()">
+                <svg
+                  width="15"
+                  height="15"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
+                  <polyline points="16,17 21,12 16,7" />
+                  <line x1="21" y1="12" x2="9" y2="12" />
+                </svg>
+                Sign Out
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- ═══════════ DASHBOARD HERO HEADER ═══════════ -->
+    <div class="dash-hero">
+      <div class="dash-hero-bg"></div>
+      <div class="dash-hero-inner">
+        <div class="dash-hero-content">
+          <div class="dash-hero-greeting">
+            <h1>
+              Welcome back,
+              <span id="heroUsername" class="dash-hero-name">User</span>
+            </h1>
+            <p>
+              Upload AWR/ASH reports and run AI-powered root cause analysis on
+              your Oracle database.
+            </p>
+          </div>
+          <div class="dash-hero-stats" id="dashHeroStats" style="display: none">
+            <div class="dhs-card">
+              <div
+                class="dhs-icon"
+                style="--dhs-bg: rgba(99, 102, 241, 0.15); --dhs-clr: #818cf8"
+              >
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"
+                  />
+                  <polyline points="14,2 14,8 20,8" />
+                </svg>
+              </div>
+              <div>
+                <div class="dhs-value" id="statFilesCount">0</div>
+                <div class="dhs-label">Reports Parsed</div>
+              </div>
+            </div>
+            <div class="dhs-card">
+              <div
+                class="dhs-icon"
+                style="--dhs-bg: rgba(16, 185, 129, 0.15); --dhs-clr: #34d399"
+              >
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+                </svg>
+              </div>
+              <div>
+                <div class="dhs-value" id="statCsvCount">0</div>
+                <div class="dhs-label">CSV Generated</div>
+              </div>
+            </div>
+            <div class="dhs-card">
+              <div
+                class="dhs-icon"
+                style="--dhs-bg: rgba(239, 68, 68, 0.15); --dhs-clr: #f87171"
+              >
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="12" y1="8" x2="12" y2="12" />
+                  <line x1="12" y1="16" x2="12.01" y2="16" />
+                </svg>
+              </div>
+              <div>
+                <div class="dhs-value" id="statHighLoad">--</div>
+                <div class="dhs-label">Load Status</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════ EXISTING DATA BANNER ═══════════ -->
+    <div class="dash-container">
+      <div
+        class="dash-existing-banner"
+        id="existingDataBanner"
+        style="display: none"
+      >
+        <div class="deb-left">
+          <div class="deb-icon">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
+              <polyline points="22,4 12,14.01 9,11.01" />
+            </svg>
+          </div>
+          <div>
+            <strong>Previously Parsed Data Found</strong>
+            <p>You have existing analysis data. Choose an option below.</p>
+          </div>
+        </div>
+        <div class="deb-actions">
+          <button
+            class="dash-btn dash-btn-primary dash-btn-sm"
+            onclick="viewExistingResults()"
+          >
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+            View Existing Results
+          </button>
+          <button
+            class="dash-btn dash-btn-outline dash-btn-sm"
+            onclick="startFreshUpload()"
+          >
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+              <polyline points="17,8 12,3 7,8" />
+              <line x1="12" y1="3" x2="12" y2="15" />
+            </svg>
+            Upload New Files
+          </button>
+        </div>
+      </div>
+
+      <!-- ═══════════ MAIN GRID LAYOUT ═══════════ -->
+      <div class="dash-grid">
+        <!-- LEFT: Upload Section -->
+        <div class="dash-grid-main">
+          <!-- Upload Card -->
+          <section class="dash-card" id="uploadSection">
+            <div class="dash-card-header">
+              <div class="dch-left">
+                <div
+                  class="dch-icon-wrap"
+                  style="
+                    --iw-bg: linear-gradient(
+                      135deg,
+                      rgba(59, 130, 246, 0.2),
+                      rgba(99, 102, 241, 0.2)
+                    );
+                  "
+                >
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="#818cf8"
+                    stroke-width="2"
+                  >
+                    <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+                    <polyline points="17,8 12,3 7,8" />
+                    <line x1="12" y1="3" x2="12" y2="15" />
+                  </svg>
+                </div>
+                <div>
+                  <h2>Upload Reports</h2>
+                  <p>
+                    Upload Oracle AWR and ASH HTML reports for AI-powered
+                    analysis
+                  </p>
+                </div>
+              </div>
+              <span class="dash-badge dash-badge-info">AWR / ASH</span>
+            </div>
+
+            <div class="dash-upload-zone" id="uploadArea">
+              <div class="duz-visual">
+                <div class="duz-circle">
+                  <svg
+                    width="28"
+                    height="28"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                  >
+                    <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+                    <polyline points="17,8 12,3 7,8" />
+                    <line x1="12" y1="3" x2="12" y2="15" />
+                  </svg>
+                </div>
+                <h3>Drag & drop files here</h3>
+                <p>or <span class="duz-browse">browse your computer</span></p>
+                <div class="duz-formats">
+                  <span class="duz-format-chip">.html</span>
+                  <span class="duz-format-chip">AWR Reports</span>
+                  <span class="duz-format-chip">ASH Reports</span>
+                </div>
+              </div>
+              <input
+                type="file"
+                id="fileInput"
+                multiple
+                accept=".html"
+                style="display: none"
+              />
+            </div>
+
+            <div
+              class="file-list-container"
+              id="fileList"
+              style="display: none"
+            >
+              <ul id="selectedFiles" style="list-style: none; padding: 0"></ul>
+            </div>
+
+            <div
+              style="margin-top: 16px; display: flex; gap: 12px"
+              id="uploadActions"
+            >
+              <button
+                id="uploadBtn"
+                class="dash-btn dash-btn-primary"
+                style="display: none"
+                onclick="uploadFiles()"
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+                  <polyline points="17,8 12,3 7,8" />
+                  <line x1="12" y1="3" x2="12" y2="15" />
+                </svg>
+                Upload &amp; Parse Files
+              </button>
+            </div>
+
+            <div
+              class="status-bar info"
+              id="uploadStatus"
+              style="display: none"
+            ></div>
+          </section>
+
+          <!-- Parsing Results -->
+          <section
+            class="dash-card animate-slide"
+            id="parsingSection"
+            style="display: none"
+          >
+            <div class="dash-card-header">
+              <div class="dch-left">
+                <div
+                  class="dch-icon-wrap"
+                  style="
+                    --iw-bg: linear-gradient(
+                      135deg,
+                      rgba(16, 185, 129, 0.2),
+                      rgba(52, 211, 153, 0.2)
+                    );
+                  "
+                >
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="#34d399"
+                    stroke-width="2"
+                  >
+                    <path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
+                    <polyline points="22,4 12,14.01 9,11.01" />
+                  </svg>
+                </div>
+                <div>
+                  <h2>Parsing Results</h2>
+                  <p>Report parsing and data extraction summary</p>
+                </div>
+              </div>
+              <span class="dash-badge dash-badge-success">Complete</span>
+            </div>
+            <div id="parsingStatus"></div>
+            <div id="highLoadSection" style="display: none; margin-top: 20px">
+              <div class="dash-alert dash-alert-danger">
+                <div class="dash-alert-icon">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path
+                      d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"
+                    />
+                    <line x1="12" y1="9" x2="12" y2="13" />
+                    <line x1="12" y1="17" x2="12.01" y2="17" />
+                  </svg>
+                </div>
+                <div>
+                  <strong>High Load Detected</strong>
+                  <div id="highLoadResults"></div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- RCA Analysis Trigger -->
+          <section
+            class="dash-card animate-slide"
+            id="timeWindowSection"
+            style="display: none"
+          >
+            <div class="dash-card-header">
+              <div class="dch-left">
+                <div
+                  class="dch-icon-wrap"
+                  style="
+                    --iw-bg: linear-gradient(
+                      135deg,
+                      rgba(245, 158, 11, 0.2),
+                      rgba(251, 191, 36, 0.2)
+                    );
+                  "
+                >
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="#fbbf24"
+                    stroke-width="2"
+                  >
+                    <circle cx="11" cy="11" r="8" />
+                    <path d="M21 21l-4.35-4.35" />
+                  </svg>
+                </div>
+                <div>
+                  <h2>Run RCA Analysis</h2>
+                  <p>AI-powered root cause analysis engine</p>
+                </div>
+              </div>
+            </div>
+            <div class="dash-rca-trigger">
+              <div class="drt-window">
+                <div class="drt-window-label">
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <circle cx="12" cy="12" r="10" />
+                    <polyline points="12,6 12,12 16,14" />
+                  </svg>
+                  Detected Analysis Window
+                </div>
+                <div class="drt-window-value" id="detectedTimeWindowDisplay">
+                  --
+                </div>
+              </div>
+              <button
+                id="runRcaBtn"
+                class="dash-btn dash-btn-rca"
+                onclick="runRCA()"
+                disabled
+              >
+                <div class="rca-btn-glow"></div>
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <circle cx="11" cy="11" r="8" />
+                  <path d="M21 21l-4.35-4.35" />
+                </svg>
+                Run AI Analysis
+              </button>
+            </div>
+          </section>
+        </div>
+
+        <!-- RIGHT: Quick Info Sidebar -->
+        <div class="dash-grid-side">
+          <div class="dash-side-card">
+            <h3>
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <path d="M12 16v-4" />
+                <path d="M12 8h.01" />
+              </svg>
+              How it works
+            </h3>
+            <ol class="dash-steps">
+              <li>
+                <div class="step-num">1</div>
+                <div>
+                  <strong>Upload Reports</strong>
+                  <p>Upload AWR/ASH HTML report files</p>
+                </div>
+              </li>
+              <li>
+                <div class="step-num">2</div>
+                <div>
+                  <strong>Auto-Parse</strong>
+                  <p>System extracts metrics into CSV</p>
+                </div>
+              </li>
+              <li>
+                <div class="step-num">3</div>
+                <div>
+                  <strong>AI Analysis</strong>
+                  <p>Run root cause analysis with AI</p>
+                </div>
+              </li>
+              <li>
+                <div class="step-num">4</div>
+                <div>
+                  <strong>Get Actions</strong>
+                  <p>Receive DBA-ready fix queries</p>
+                </div>
+              </li>
+            </ol>
+          </div>
+          <div class="dash-side-card">
+            <h3>
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+              </svg>
+              Supported Reports
+            </h3>
+            <div class="dash-report-types">
+              <div class="drt-item">
+                <div class="drt-dot" style="background: #6366f1"></div>
+                <span>AWR Reports</span>
+                <span class="drt-ext">.html</span>
+              </div>
+              <div class="drt-item">
+                <div class="drt-dot" style="background: #10b981"></div>
+                <span>ASH Reports</span>
+                <span class="drt-ext">.html</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════ TAB NAVIGATION (after RCA) ═══════════ -->
+      <div class="rca-tab-bar" id="resultsTabNav" style="display: none">
+        <div class="rca-tab-inner">
+          <button
+            class="rca-tab active"
+            data-view="overview"
+            onclick="switchView('overview')"
+          >
+            <span class="tab-dot bg-accent"></span>Overview
+          </button>
+          <button class="rca-tab" data-view="rca" onclick="switchView('rca')">
+            <span class="tab-dot bg-red"></span>Root Cause Analysis
+          </button>
+          <button
+            class="rca-tab"
+            data-view="dba-actions"
+            onclick="switchView('dba-actions')"
+          >
+            <span class="tab-dot bg-green"></span>DBA Actions
+          </button>
+          <button
+            class="rca-tab"
+            data-view="fix-recs"
+            onclick="switchView('fix-recs')"
+          >
+            <span class="tab-dot bg-purple"></span>Fix Recommendations
+          </button>
+          <button
+            class="rca-tab"
+            data-view="action-plan"
+            onclick="switchView('action-plan')"
+          >
+            <span class="tab-dot bg-blue"></span>Action Plan
+          </button>
+        </div>
+      </div>
+
+      <!-- OVERVIEW VIEW -->
+      <div class="rca-view active" id="view-overview">
+        <section
+          class="rca-card"
+          id="workloadSummarySection"
+          style="display: none"
+        >
+          <div class="rca-card-head">
+            <h2><span class="hicon">🧠</span> AI-Driven DBA Expert Analysis</h2>
+            <span class="rca-badge" id="patternBadge2">--</span>
+          </div>
+          <div id="workloadSummaryContent"></div>
+        </section>
+      </div>
+
+      <!-- RCA VIEW -->
+      <div class="rca-view" id="view-rca">
+        <section class="rca-card">
+          <div class="rca-card-head">
+            <h2><span class="hicon">🎯</span> Root Cause Analysis</h2>
+            <span class="rca-badge blue" id="rcaFindingCount">0 Findings</span>
+          </div>
+          <div id="rcaContent">
+            <div class="rca-empty">
+              Run RCA analysis to see root cause findings.
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- DBA ACTIONS VIEW -->
+      <div class="rca-view" id="view-dba-actions">
+        <section class="rca-card">
+          <div class="rca-card-head">
+            <h2>
+              <span class="hicon">⚡</span> DBA Actions to Reduce Database Load
+            </h2>
+            <button
+              class="copy-all-btn"
+              onclick="copyAllQueries('view-dba-actions')"
+            >
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <rect x="9" y="9" width="13" height="13" rx="2" />
+                <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+              </svg>
+              Copy All Queries
+            </button>
+          </div>
+          <div id="dbaActionsContent">
+            <div class="rca-empty">
+              DBA actions will appear after RCA analysis.
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- FIX RECOMMENDATIONS VIEW -->
+      <div class="rca-view" id="view-fix-recs">
+        <section class="rca-card">
+          <div class="rca-card-head">
+            <h2><span class="hicon">🔧</span> Fix Recommendations</h2>
+            <button
+              class="copy-all-btn"
+              onclick="copyAllQueries('view-fix-recs')"
+            >
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <rect x="9" y="9" width="13" height="13" rx="2" />
+                <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+              </svg>
+              Copy All Queries
+            </button>
+          </div>
+          <div id="fixRecsContent">
+            <div class="rca-empty">
+              Fix recommendations will appear after RCA analysis.
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- ACTION PLAN VIEW -->
+      <div class="rca-view" id="view-action-plan">
+        <section class="rca-card">
+          <div class="rca-card-head">
+            <h2>
+              <span class="hicon">📝</span> Detailed Analysis & Action Plan
+            </h2>
+            <button
+              class="copy-all-btn"
+              onclick="copyAllQueries('view-action-plan')"
+            >
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <rect x="9" y="9" width="13" height="13" rx="2" />
+                <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+              </svg>
+              Copy All Queries
+            </button>
+          </div>
+          <div id="actionPlanContent">
+            <div class="rca-empty">
+              Detailed analysis will appear after RCA analysis.
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Hidden compatibility elements -->
+      <div id="dbaExpertSection" style="display: none">
+        <div id="dbaExpertContent"></div>
+      </div>
+      <div id="patternBadge" style="display: none"></div>
+
+      <!-- Summary Table -->
+      <section class="section-card" id="summarySection" style="display: none">
+        <div class="section-header">
+          <h2>
+            <span
+              class="icon"
+              style="background: var(--warning-bg); color: var(--warning)"
+              >⚠️</span
+            >Problematic Queries
+          </h2>
+        </div>
+        <div style="overflow-x: auto">
+          <table class="data-table" id="summaryTable">
+            <thead>
+              <tr>
+                <th>SQL ID</th>
+                <th>Elapsed Time (s)</th>
+                <th>CPU Time (s)</th>
+                <th>Executions</th>
+                <th>Avg Elapsed</th>
+                <th>Risk</th>
+              </tr>
+            </thead>
+            <tbody id="summary-table-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Detailed Results -->
+      <section class="section-card" id="resultsSection" style="display: none">
+        <div class="section-header">
+          <h2>
+            <span
+              class="icon"
+              style="background: var(--danger-bg); color: var(--danger)"
+              >🔥</span
+            >Detailed Analysis
+          </h2>
+        </div>
+        <div style="overflow-x: auto">
+          <table class="data-table" id="detailedTable">
+            <thead>
+              <tr>
+                <th>SQL ID</th>
+                <th>Elapsed</th>
+                <th>CPU</th>
+                <th>Execs</th>
+                <th>Avg</th>
+                <th>Risk</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="detailed-table-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Fix Panel -->
+      <section class="fix-panel-section" id="fixPanel" style="display: none">
+        <h2>Fix Recommendations</h2>
+        <div class="fix-grid">
+          <div class="fix-card">
+            <h3>Index Recommendation</h3>
+            <div class="copy-wrapper">
+              <pre id="recIndex">N/A</pre>
+              <button
+                class="btn-copy"
+                onclick="
+                  copyToClipboard(
+                    document.getElementById('recIndex').textContent,
+                    this,
+                  )
+                "
+              >
+                Copy
+              </button>
+            </div>
+          </div>
+          <div class="fix-card">
+            <h3>SQL Rewrite</h3>
+            <div class="copy-wrapper">
+              <pre id="recRewrite">N/A</pre>
+              <button
+                class="btn-copy"
+                onclick="
+                  copyToClipboard(
+                    document.getElementById('recRewrite').textContent,
+                    this,
+                  )
+                "
+              >
+                Copy
+              </button>
+            </div>
+          </div>
+          <div class="fix-card">
+            <h3>Risk Assessment</h3>
+            <span id="riskScore" class="risk-score">N/A</span>
+          </div>
+          <div class="fix-card">
+            <h3>DBA Commands</h3>
+            <div class="copy-wrapper">
+              <pre id="commands">N/A</pre>
+              <button
+                class="btn-copy"
+                onclick="
+                  copyToClipboard(
+                    document.getElementById('commands').textContent,
+                    this,
+                  )
+                "
+              >
+                Copy
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <script src="/static/app.js?v=20260228"></script>
+    <script src="/static/views-manager.js?v=20260228"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        initializeFileUpload();
+        loadExistingResults();
+        initializeTimePickers(null);
+        loadUsername();
+      });
+
+      function loadUsername() {
+        const avatar = document.getElementById("userAvatar");
+        const display = document.getElementById("usernameDisplay");
+        const heroName = document.getElementById("heroUsername");
+        const dropAvatar = document.getElementById("dropdownAvatar");
+        const dropName = document.getElementById("dropdownName");
+
+        function setName(name) {
+          if (!name) return;
+          display.textContent = name;
+          avatar.textContent = name.charAt(0).toUpperCase();
+          if (heroName) heroName.textContent = name;
+          if (dropAvatar) dropAvatar.textContent = name.charAt(0).toUpperCase();
+          if (dropName) dropName.textContent = name;
+        }
+
+        // Try /api/results first (returns username even on 404)
+        fetch("/api/results", { credentials: "include" })
+          .then((r) => r.json())
+          .then((d) => setName(d.username))
+          .catch(() => {});
+      }
+
+      function toggleUserDropdown() {
+        const dd = document.getElementById("userDropdown");
+        dd.classList.toggle("open");
+      }
+      // Close dropdown when clicking outside
+      document.addEventListener("click", (e) => {
+        const wrapper = document.querySelector(".dash-user-wrapper");
+        const dd = document.getElementById("userDropdown");
+        if (wrapper && dd && !wrapper.contains(e.target)) {
+          dd.classList.remove("open");
+        }
+      });
+
+      async function loadExistingResults() {
+        try {
+          const response = await fetch("/api/results", {
+            method: "GET",
+            credentials: "include",
+            cache: "no-store",
+          });
+          if (!response.ok) return;
+          const result = await response.json();
+          if (result.has_data) {
+            showExistingDataOptions();
+          }
+        } catch (err) {
+          console.log("No existing data");
+        }
+      }
+
+      async function uploadFiles() {
+        const formData = new FormData();
+        selectedFiles.forEach((f) => formData.append("files", f));
+        const response = await fetch("/api/upload", {
+          method: "POST",
+          body: formData,
+          credentials: "include",
+          cache: "no-store",
+        });
+        const result = await response.json();
+        displayParsingResults(result);
+      }
+
+      function logout() {
+        fetch("/auth/logout", { method: "POST", credentials: "include" }).then(
+          () => (window.location.href = "/login"),
+        );
+      }
+    </script>
+  </body>
+</html>

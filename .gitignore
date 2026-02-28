@@ -1,0 +1,45 @@
+# Byte-compiled
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Data (user uploads)
+data/users/*/raw_html/
+data/users/*/parsed_csv/
+data/users/*/results/
+data/user_data/
+
+# Raw HTML data
+data/raw_html/
+
+# Cache
+*.pyc
+
+# Junk/temp files
+_fix_syntax.py
+*.bak
+nohup.out
+ui/nohup.out
+'as
+'detector
+'except
+'for
+'unified_metrics
+engine/'for
+engine/None
+.prettierignore
