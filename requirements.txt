@@ -4,3 +4,4 @@ python-multipart
 pandas
 beautifulsoup4
 lxml
+numpy
